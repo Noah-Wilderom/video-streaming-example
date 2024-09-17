@@ -1,0 +1,55 @@
+package views
+
+templ Video(id string, processed bool, m3u8 string, token string) {
+    @AppLayout() {
+       <div
+           style="width: 640px; height: 360px;" class="border-1 border-solid border-sky-500"
+       >
+            if !processed {
+               <h3 class="text-xl font-bold ml-4">
+                    Video is processing
+               </h3>
+               <div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading"></div>
+               <span class="sr-only">Loading...</span>
+            } else {
+            <video id="video" style="width: 640px; height: 360px;" controls></video>
+            <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+
+            <button onclick={makePlayer(token, m3u8)}>Watch</button>
+            }
+       </div>
+    }
+}
+
+script makePlayer(token string, content string) {
+    if (Hls.isSupported()) {
+        console.log("HLS is supported")
+    } else {
+        console.error("HLS is not supported")
+        return
+    }
+
+    const player = document.getElementById("video")
+    const hls = new Hls({
+        xhrSetup: function (xhr, url) {
+            xhr.setRequestHeader('Authorization', token);
+        }
+    });
+
+	const blob = new Blob([content], { type: 'application/x-mpegURL' });
+    hls.loadSource(URL.createObjectURL(blob));
+    hls.attachMedia(player);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        console.info("MANIFEST HAS BEEN PARSED")
+        player.play();
+    });
+    // Handle errors
+    hls.on(Hls.Events.ERROR, function (event, data) {
+        console.error("HLS error:", data.fatal, data);
+    });
+
+    // Clean up the URL object when done
+    hls.on(Hls.Events.DESTROYING, function () {
+        URL.revokeObjectURL(url);
+    });
+}

@@ -1,0 +1,40 @@
+package views
+
+templ Index() {
+
+    @AppLayout() {
+        @UploadForm()
+    }
+}
+
+templ UploadForm() {
+  <form 
+    enctype="multipart/form-data"
+    hx-post="/upload"
+    hx-swap="outerHTML"
+    class="w-full"
+  >
+
+    <div id="dropContainer" class="border-2 border-solid border-sky-500" style="height:100px;"></div>
+    <input id="file" name="file" type="file" />
+    <button 
+      class="rounded-md bg-indigo-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" 
+      type="submit"
+    >
+      Upload
+    </button>
+  </form>
+}
+
+templ UploadInProgress(id string) {
+  <div
+    hx-get="/upload/progress/{ id }"
+    hx-swap="outerHTML"
+  >
+    <h3 class="text-xl font-bold ml-4">
+      Upload in progress
+    </h3>
+    <div class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500" role="status" aria-label="loading"></div>
+    <span class="sr-only">Loading...</span>
+  </div>
+}
