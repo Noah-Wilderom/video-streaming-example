@@ -1,9 +1,11 @@
 {
   "devDependencies": {
-    "tailwindcss": "^3.4.10"
-  },
-  "dependencies": {
-    "esbuild": "^0.23.0",
-    "hls.js": "^1.5.15"
+    "@tailwindcss/forms": "^0.5.9",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.11.1",
+    "hls.js": "^1.5.15",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "esbuild": "^0.23.1"
   }
 }

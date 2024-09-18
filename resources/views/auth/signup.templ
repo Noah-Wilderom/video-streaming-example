@@ -1,0 +1,107 @@
+package auth
+
+import (
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views/layout"
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views"
+
+)
+
+type SignupParams struct {
+	Name           string
+	Email           string
+	Password        string
+	ConfirmPassword string
+}
+
+type SignupErrors struct {
+	Name           string
+	Email           string
+	Password        string
+	ConfirmPassword string
+}
+
+templ Signup() {
+    @layout.App(false) {
+        <div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
+            <div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
+                <h1 class="text-center text-2xl font-black mb-10">
+					Signup to { views.GetGlobalData(ctx).Name }
+				</h1>
+				@SignupForm(SignupParams{}, SignupErrors{})
+		    </div>
+        </div>
+    }
+}
+
+templ SignupForm(params SignupParams, errors SignupErrors) {
+    <form
+        hx-post="/signup"
+        hx-swap="outerHTML"
+        class="w-full"
+    >
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Name</span>
+            </div>
+            <input type="text" value={ params.Name } name="name" required placeholder="John Doe" class="input input-bordered w-full"/>
+            if len(errors.Name) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.Name }
+                    </span>
+                </div>
+            }
+        </label>
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Email</span>
+            </div>
+            <input type="Email" value={ params.Email } name="email" required placeholder="johndoe@example.com" class="input input-bordered w-full"/>
+            if len(errors.Email) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.Email }
+                    </span>
+                </div>
+            }
+        </label>
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input type="password" name="password" required autocomplete="off" placeholder="********" class="input input-bordered w-full"/>
+            if len(errors.Password) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.Password }
+                    </span>
+                </div>
+            }
+        </label>
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Confirm Password</span>
+            </div>
+            <input type="password" name="confirm_password" required autocomplete="off" class="input input-bordered w-full"/>
+            if len(errors.ConfirmPassword) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.ConfirmPassword }
+                    </span>
+                </div>
+            }
+        </label>
+        <button type="submit" class="btn btn-accent my-2 w-full">
+            <i class="fa-solid fa-lock"></i>
+            Signup
+        </button>
+    </form>
+}
+
+templ CallbackScript() {
+	<script>
+        const url = window.location.href;
+        const newUrl = url.replace("#", "?")
+        window.location = newUrl
+    </script>
+}

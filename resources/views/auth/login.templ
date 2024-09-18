@@ -1,0 +1,80 @@
+package auth
+
+import (
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views/layout"
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views"
+)
+
+
+type UserCredentials struct {
+    Email string
+    Password string
+}
+
+type LoginErrors struct {
+	Email              string
+	Password           string
+	InvalidCredentials string
+}
+
+templ Login() {
+    @layout.App(false) {
+        <div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
+            <div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
+                <h1 class="text-center text-2xl font-black mb-10">
+                    Login to { views.GetGlobalData(ctx).Name }
+                </h1>
+                @LoginForm(UserCredentials{}, LoginErrors{})
+            </div>
+        </div>
+    }
+}
+
+templ LoginForm(creds UserCredentials, errors LoginErrors) {
+    <form
+        hx-post="/login"
+        hx-swap="outerHTML"
+        class="w-full"
+    >
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Email</span>
+            </div>
+            <input type="Email" value={ creds.Email } name="email" required placeholder="johndoe@example.com" class="input input-bordered w-full"/>
+
+            if len(errors.Email) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.Email }
+                    </span>
+                </div>
+            }
+        </label>
+        <label class="form-control w-full my-4">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input type="password" name="password" required placeholder="********" class="input input-bordered w-full"/>
+
+            if len(errors.Password) > 0 {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        { errors.Password }
+                    </span>
+                </div>
+            }
+        </label>
+
+        if len(errors.InvalidCredentials) > 0 {
+            <div class="text-sm text-error mt-4">
+                { errors.InvalidCredentials }
+            </div>
+        }
+
+        <button type="submit" class="btn btn-accent my-2 w-full">
+            <i class="fa-solid fa-lock"></i>
+            Login
+        </button>
+    </form>
+}
+

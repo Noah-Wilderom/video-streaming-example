@@ -1,7 +1,11 @@
-package views
+package video
+
+import (
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views/layout"
+)
 
 templ Video(id string, processed bool, m3u8 string, token string) {
-    @AppLayout() {
+    @layout.App(true) {
        <div
            style="width: 640px; height: 360px;" class="border-1 border-solid border-sky-500"
        >

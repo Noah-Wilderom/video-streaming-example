@@ -1,0 +1,28 @@
+package layout
+
+import (
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views"
+    "github.com/Noah-Wilderom/video-streaming-test/resources/views/components"
+)
+
+templ App(nav bool) {
+    <!DOCTYPE html>
+	<html lang="en" data-theme="dark">
+		<head>
+			<title>{ views.GetGlobalData(ctx).Name }</title>
+			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" href="/public/assets/styles.css" />
+			<script src="/public/assets/app.js"></script>
+			<!-- HTMX -->
+            <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+		</head>
+		<body class="antialiased">
+            if nav {
+				@components.Navigation()
+			}
+			{ children... }
+		</body>
+	</html>
+}
