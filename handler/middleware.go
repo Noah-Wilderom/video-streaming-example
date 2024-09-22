@@ -37,9 +37,8 @@ func Authenticated(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		cookie, err := c.Cookie("at")
-		if err != nil {
+		if err != nil || cookie.Value == "" {
 			return c.Redirect(http.StatusSeeOther, "/login")
-			return next(c)
 		}
 
 		apiClient := client.NewClient()

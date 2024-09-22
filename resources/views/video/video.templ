@@ -4,7 +4,7 @@ import (
     "github.com/Noah-Wilderom/video-streaming-test/resources/views/layout"
 )
 
-templ Video(id string, processed bool, m3u8 string, token string) {
+templ Video(id string, processed bool, m3u8 string, preview string, token string) {
     @layout.App(true) {
        <div
            style="width: 640px; height: 360px;" class="border-1 border-solid border-sky-500"
@@ -19,7 +19,8 @@ templ Video(id string, processed bool, m3u8 string, token string) {
             <video id="video" style="width: 640px; height: 360px;" controls></video>
             <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
 
-            <button onclick={makePlayer(token, m3u8)}>Watch</button>
+            <button class="btn btn-primary" onclick={makePlayer(token, m3u8)}>Watch</button>
+            <button class="btn btn-primary" onclick={makePlayer(token, preview)}>Preview</button>
             }
        </div>
     }
@@ -41,14 +42,17 @@ script makePlayer(token string, content string) {
     });
 
 	const blob = new Blob([content], { type: 'application/x-mpegURL' });
-    hls.loadSource(URL.createObjectURL(blob));
+	const blobUrl = URL.createObjectURL(blob)
+    hls.loadSource(blobUrl);
     hls.attachMedia(player);
     hls.on(Hls.Events.MANIFEST_PARSED, function () {
         console.info("MANIFEST HAS BEEN PARSED")
+        URL.revokeObjectURL(blobUrl)
         player.play();
     });
     // Handle errors
     hls.on(Hls.Events.ERROR, function (event, data) {
+
         console.error("HLS error:", data.fatal, data);
     });
 

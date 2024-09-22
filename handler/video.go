@@ -1,57 +1,38 @@
 package handler
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
+	"github.com/Noah-Wilderom/video-streaming-test/client"
 	"github.com/Noah-Wilderom/video-streaming-test/resources/views/home"
 	"github.com/Noah-Wilderom/video-streaming-test/resources/views/video"
 	"github.com/labstack/echo/v4"
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func HandleVideoShow(c echo.Context) error {
 	user := getAuthenticatedUser(c)
 
 	videoId := c.Param("id")
-	streamApiUrl := "http://localhost:8080/stream/new/" + videoId
-	streamReq, err := http.NewRequest(http.MethodPost, streamApiUrl, nil)
-	streamReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-	streamClient := &http.Client{}
-	streamResp, err := streamClient.Do(streamReq)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	defer streamResp.Body.Close()
 
-	if streamResp.StatusCode != http.StatusOK {
-		fmt.Println(streamResp.StatusCode)
-		if streamResp.StatusCode == http.StatusNotFound {
-			return c.String(http.StatusNotFound, "video not found")
-		}
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
 
-	streamRespBody, err := io.ReadAll(streamResp.Body)
+	apiClient := client.NewClient()
+	streamResp, err := apiClient.WatchStream(ctx, videoId, user.Token)
 	if err != nil {
-		fmt.Println(err.Error())
 		return err
 	}
 
-	var streamRespStruct struct {
-		Content string `json:"content"`
-		Type    string `json:"type"`
-	}
-
-	fmt.Println(string(streamRespBody))
-	err = json.Unmarshal(streamRespBody, &streamRespStruct)
+	previewResp, err := apiClient.PreviewStream(ctx, videoId, user.Token)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
-	return Render(c, video.Video(videoId, true, streamRespStruct.Content, user.Token))
+	return Render(c, video.Video(videoId, true, streamResp.Content, previewResp.Content, user.Token))
 }
 
 func HandleUploadVideo(c echo.Context) error {

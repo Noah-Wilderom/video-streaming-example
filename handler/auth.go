@@ -142,6 +142,5 @@ func setAuthCookie(c echo.Context, accessToken string) {
 		HttpOnly: true,
 		Secure:   true,
 	}
-
 	c.SetCookie(cookie)
 }

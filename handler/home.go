@@ -33,6 +33,8 @@ func HandleHomeIndex(c echo.Context) error {
 		return err
 	}
 
+	fmt.Println(string(respBody))
+
 	var respStruct struct {
 		Videos []*video.Video `json:"videos"`
 	}
